@@ -238,6 +238,6 @@ Su facilidad de uso, modularidad y compatibilidad con **OpenFlow** lo convierten
 
 ---
 
-**Autor:** _Yohan David Morelo Julio_  _y_ _Nayelys Ocampo_
+**Autores:** _Yohan David Morelo Julio_ _y_ _Nayelys Ocampo_                                                                                  
 **Versión del documento:** 1.0  
 **Última actualización:** Octubre 2025
