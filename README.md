@@ -1,29 +1,29 @@
 # 🧠 Controlador SDN Ryu — Guía Completa de Instalación y Pruebas con Mininet
 
-**Autores:** _Yohan David Morelo Julio_ _y_ _Nayelys Ocampo_                                                                             
+**Autores:** _Yohan David Morelo Julio_ _y_ _Nayelys Ocampo_                                                                              
 **Versión del documento:** 1.2  
 **Última actualización:** Octubre 2025
 
 ---
 
-## 🗂️ Tabla de Contenido
-- [📘 Introducción Teórica](#📘-introducción-teórica)
-- [💡 ¿Qué es Ryu?](#💡-qué-es-ryu)
-- [⚙️ Cuándo usar y cuándo no usar Ryu](#⚙️-cuándo-usar-y-cuándo-no-usar-ryu)
-- [📋 Requerimientos](#📋-requerimientos)
-- [🧩 Instalación paso a paso](#🧩-instalación-paso-a-paso)
-- [🧪 Entorno de pruebas con Mininet](#🧪-entorno-de-pruebas-con-mininet)
-- [🔥 Ejemplo práctico: Controlador REST Firewall](#🔥-ejemplo-práctico-controlador-rest-firewall)
-- [🧑‍💻 Topologías avanzadas en Mininet usando Python](#🧑‍💻-topologías-avanzadas-en-mininet-usando-python)
-- [💻 Tips para Windows y Virtualización](#💻-tips-para-windows-y-virtualización)
-- [📊 Análisis de tráfico de red en el laboratorio](#📊-análisis-de-tráfico-de-red-en-el-laboratorio)
-- [📂 Estructura recomendada del proyecto](#📂-estructura-recomendada-del-proyecto)
-- [🧱 Diagrama conceptual del flujo SDN](#🧱-diagrama-conceptual-del-flujo-sdn)
-- [⚠️ Problemas comunes y soluciones](#⚠️-problemas-comunes-y-soluciones)
-- [🛠 Troubleshooting avanzado y FAQ](#🛠-troubleshooting-avanzado-y-faq)
-- [🏁 Flujo típico de laboratorio SDN](#🏁-flujo-típico-de-laboratorio-sdn)
-- [📚 Referencias útiles](#📚-referencias-útiles)
-- [🏁 Conclusión](#🏁-conclusión)
+## Tabla de Contenido
+- [Introduccion Teorica](#introduccion-teorica)
+- [Que es Ryu](#que-es-ryu)
+- [Cuando usar y cuando no usar Ryu](#cuando-usar-y-cuando-no-usar-ryu)
+- [Requerimientos](#requerimientos)
+- [Instalacion paso a paso](#instalacion-paso-a-paso)
+- [Entorno de pruebas con Mininet](#entorno-de-pruebas-con-mininet)
+- [Ejemplo practico Controlador REST Firewall](#ejemplo-practico-controlador-rest-firewall)
+- [Topologias avanzadas en Mininet usando Python](#topologias-avanzadas-en-mininet-usando-python)
+- [Tips para Windows y Virtualizacion](#tips-para-windows-y-virtualizacion)
+- [Analisis de trafico de red en el laboratorio](#analisis-de-trafico-de-red-en-el-laboratorio)
+- [Estructura recomendada del proyecto](#estructura-recomendada-del-proyecto)
+- [Diagrama conceptual del flujo SDN con Ryu y Mininet](#diagrama-conceptual-del-flujo-sdn-con-ryu-y-mininet)
+- [Problemas comunes y soluciones](#problemas-comunes-y-soluciones)
+- [Troubleshooting avanzado y FAQ](#troubleshooting-avanzado-y-faq)
+- [Flujo tipico de laboratorio SDN](#flujo-tipico-de-laboratorio-sdn)
+- [Referencias utiles](#referencias-utiles)
+- [Conclusion](#conclusion)
 
 ---
 
