@@ -197,6 +197,46 @@ Ahora h1 no podrá comunicarse con h2.
 
 ---
 
+### 🧰 Ejemplos de uso del firewall REST con Ryu
+
+> ⚠️ **Por defecto, Ryu rest_firewall bloquea todo el tráfico. Debes crear reglas ALLOW explícitas para permitir la conectividad.**
+
+- **Permitir TODO el tráfico IPv4 entre todos los hosts:**
+```bash
+curl -X POST -d '{"dl_type": "IPv4", "nw_src": "10.0.0.0/24", "nw_dst": "10.0.0.0/24", "actions": "ALLOW"}' http://127.0.0.1:8080/firewall/rules/all
+```
+
+- **Bloquear el tráfico de un host origen a uno destino:**
+```bash
+curl -X POST -d '{"nw_src":"10.0.0.1","nw_dst":"10.0.0.2","actions":"DENY"}' http://127.0.0.1:8080/firewall/rules/all
+```
+
+- **Permitir SOLO el tráfico de h1 a h4 (bloqueando el resto):**
+(Paso 1, elimina todas las reglas previas)
+```bash
+# Primero, elimina todas las reglas del firewall
+# Obtén los rule_id y switch_id con: curl http://127.0.0.1:8080/firewall/rules/all
+curl -X DELETE http://127.0.0.1:8080/firewall/rules/<switch_id>/<rule_id>
+```
+(Paso 2, agrega la regla ALLOW)
+```bash
+curl -X POST -d '{"nw_src":"10.0.0.1","nw_dst":"10.0.0.4","actions":"ALLOW"}' http://127.0.0.1:8080/firewall/rules/all
+```
+
+- **Ver todas las reglas (y su orden/prioridad):**
+```bash
+curl http://127.0.0.1:8080/firewall/rules/all
+```
+
+- **Habilitar el firewall en un switch (imprescindible que esté "enable"):**
+```bash
+curl -X PUT -d '{"status":"enable"}' http://127.0.0.1:8080/firewall/module/enable/<dpid>
+# Por ejemplo, para s1:
+curl -X PUT -d '{"status":"enable"}' http://127.0.0.1:8080/firewall/module/enable/0000000000000001
+```
+
+---
+
 ## 🧑‍💻 Topologías avanzadas en Mininet usando Python
 
 Puedes diseñar topologías personalizadas usando scripts Python. Ejemplo: `topo_test_hard.py` del repositorio.
