@@ -1,5 +1,32 @@
 # 🧠 Controlador SDN Ryu — Guía Completa de Instalación y Pruebas con Mininet
 
+**Autores:** _Yohan David Morelo Julio_ _y_ _Nayelys Ocampo_                                                                             
+**Versión del documento:** 1.2  
+**Última actualización:** Octubre 2025
+
+---
+
+## 🗂️ Tabla de Contenido
+- [📘 Introducción Teórica](#📘-introducción-teórica)
+- [💡 ¿Qué es Ryu?](#💡-qué-es-ryu)
+- [⚙️ Cuándo usar y cuándo no usar Ryu](#⚙️-cuándo-usar-y-cuándo-no-usar-ryu)
+- [📋 Requerimientos](#📋-requerimientos)
+- [🧩 Instalación paso a paso](#🧩-instalación-paso-a-paso)
+- [🧪 Entorno de pruebas con Mininet](#🧪-entorno-de-pruebas-con-mininet)
+- [🔥 Ejemplo práctico: Controlador REST Firewall](#🔥-ejemplo-práctico-controlador-rest-firewall)
+- [🧑‍💻 Topologías avanzadas en Mininet usando Python](#🧑‍💻-topologías-avanzadas-en-mininet-usando-python)
+- [💻 Tips para Windows y Virtualización](#💻-tips-para-windows-y-virtualización)
+- [📊 Análisis de tráfico de red en el laboratorio](#📊-análisis-de-tráfico-de-red-en-el-laboratorio)
+- [📂 Estructura recomendada del proyecto](#📂-estructura-recomendada-del-proyecto)
+- [🧱 Diagrama conceptual del flujo SDN](#🧱-diagrama-conceptual-del-flujo-sdn)
+- [⚠️ Problemas comunes y soluciones](#⚠️-problemas-comunes-y-soluciones)
+- [🛠 Troubleshooting avanzado y FAQ](#🛠-troubleshooting-avanzado-y-faq)
+- [🏁 Flujo típico de laboratorio SDN](#🏁-flujo-típico-de-laboratorio-sdn)
+- [📚 Referencias útiles](#📚-referencias-útiles)
+- [🏁 Conclusión](#🏁-conclusión)
+
+---
+
 ## 📘 Introducción Teórica
 
 ### ¿Qué es SDN (Software Defined Networking)?
@@ -170,6 +197,47 @@ Ahora h1 no podrá comunicarse con h2.
 
 ---
 
+## 🧑‍💻 Topologías avanzadas en Mininet usando Python
+
+Puedes diseñar topologías personalizadas usando scripts Python. Ejemplo: `topo_test_hard.py` del repositorio.
+
+### Ejecución típica con Ryu remoto
+```bash
+# En una terminal: lanza Ryu con un controlador (por ejemplo, el switch 13)
+ryu-manager ryu.app.simple_switch_13
+
+# En otra terminal, ejecuta la topología avanzada:
+sudo python3 topo_test_hard.py
+```
+- Puedes elegir el número de switches, hosts y cómo conectarlos.
+- Los switches buscarán automáticamente a Ryu en 127.0.0.1:6633.
+- Para usar otro IP o puerto (por ejemplo, en entorno distribuido):
+```python
+c0 = net.addController('c0', controller=RemoteController, ip='192.168.56.103', port=6633)
+```
+
+---
+
+## 💻 Tips para Windows y Virtualización
+- Si estás en Windows, se recomienda usar Mininet/Ubuntu en VirtualBox.
+- Usa Xming para soporte gráfico (ej. wireshark/xterm) y PuTTY para conexión por SSH.
+- Asegúrate de habilitar "Forwarding X11" en PuTTY y tener Xming encendido en tu máquina Windows.
+  - Edita `/etc/ssh/sshd_config` para que incluya:
+    - `X11Forwarding yes`
+    - `X11UseLocalhost yes`
+    - `XAuthLocation /usr/bin/X11/xauth`
+
+---
+
+## 📊 Análisis de tráfico de red en el laboratorio
+- Para capturar tráfico con `tcpdump`:
+```bash
+mininet> h1 tcpdump -i h1-eth0
+```
+- Para análisis gráfico, abre Wireshark en la VM y selecciona la interfaz deseada (ejemplo: `h1-eth0`).
+
+---
+
 ## 🧱 Diagrama conceptual del flujo SDN con Ryu y Mininet
 
 ```
@@ -222,12 +290,30 @@ Ahora h1 no podrá comunicarse con h2.
 
 ---
 
-## 🧠 Recursos adicionales
+## 🛠 Troubleshooting avanzado y FAQ
+- Si algún switch muestra "Unable to contact the remote controller...":
+  - Verifica que Ryu esté corriendo.
+  - Checa que la IP/puerto coincidan y no haya firewalls bloqueando.
+  - Usa el comando `sudo mn -c` para limpiar redes previas.
+- ¿No hay conectividad/flows?:
+  - Asegura que tu app de Ryu funciona (ver logs en consola).
+  - Verifica que el pipeline de tu script Python no tenga hosts "colgados".
 
-- 📄 [Documentación oficial de Ryu](https://ryu.readthedocs.io/)
-- 🧩 [Repositorio GitHub de Ryu](https://github.com/faucetsdn/ryu)
-- 🧪 [Mininet](http://mininet.org/)
-- 📘 RFC 7426 — *Software-Defined Networking (SDN) Layers and Architecture Terminology*
+---
+
+## 🏁 Flujo típico de laboratorio SDN
+1. Arranca la VM o tu entorno.
+2. Activa entorno virtual si aplica: `source venv/bin/activate`
+3. Levanta Ryu manager con tu app o ejemplo.
+4. Ejecuta tu topología en Mininet.
+5. Haz pruebas (ping, http, reglas REST, captura de tráfico, etc).
+6. Finaliza y limpia la red: `exit` y `sudo mn -c`.
+
+---
+
+## 📚 Referencias útiles
+- [Documentación oficial Mininet](http://mininet.org/walkthrough/)
+- [Ejemplos de apps Ryu](https://ryu.readthedocs.io/en/latest/app.html)
 
 ---
 
@@ -237,7 +323,3 @@ Ryu es una herramienta poderosa y flexible para **experimentar con redes SDN** e
 Su facilidad de uso, modularidad y compatibilidad con **OpenFlow** lo convierten en la opción ideal para **aprender, investigar y desarrollar prototipos** de controladores inteligentes.
 
 ---
-
-**Autor:** _Yohan David Morelo Julio_  
-**Versión del documento:** 1.0  
-**Última actualización:** Octubre 2025
