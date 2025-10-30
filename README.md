@@ -64,6 +64,30 @@ Proporciona una API sencilla para interactuar con dispositivos OpenFlow y contro
 - Extensible mediante módulos
 - Ideal para **experimentación, docencia e investigación**
 
+### 🧩 Principales controladores y aplicaciones integradas en Ryu
+
+Ryu incluye varios controladores y aplicaciones listos para ser usados o adaptados en laboratorios SDN, cada uno con una funcionalidad diferente:
+
+| Nombre (app)                       | Funcionalidad principal                                                                          |
+|-------------------------------------|--------------------------------------------------------------------------------------------------|
+| simple_switch                      | Switch L2 de reenvío básico (OpenFlow 1.0).                                                      |
+| simple_switch_13                   | Switch L2 para OpenFlow 1.3, mayor flexibilidad e inspección.                                    |
+| simple_hub                         | Funcionamiento tipo hub: reenvía todo a todos los puertos (excepto el de entrada).               |
+| l2_multi_switch                    | Múltiples switches, reenvío Capa 2 básico.                                                       |
+| l3_switch                          | Enrutador simple de Capa 3 para varias subredes.                                                 |
+| ofctl_rest                         | API RESTful para gestionar y consultar flujos OpenFlow de forma sencilla.                        |
+| topology                           | API REST de consulta de topología de red controlada por Ryu.                                     |
+| rest_firewall                      | Firewall REST: permite crear, modificar o borrar reglas de filtrado en tiempo real vía HTTP.     |
+| rest_qos                           | Gestiona reglas de Calidad de Servicio (QoS) vía REST.                                           |
+| rest_loadbalancer                  | Reglas y balanceo de carga simple vía REST.                                                      |
+| rest_router                        | Router SDN gestionable por REST API.                                                             |
+| rest_conf_switch                   | Configuración dinámica de switches vía REST.                                                     |
+| rest_topology                      | Consulta y vista de topología OpenFlow vía REST.                                                 |
+| rest                         | Ejemplo de servidor REST genérico para interacciones básicas.                                       |
+| ofctl_rest                         | Ejemplo avanzado de servidor REST para administrar flujos y grupos.                               |
+
+> Existen más ejemplos y aplicaciones, estos son los más usados en pruebas docencia/laboratorio. Todos se encuentran en el paquete `ryu.app` o la documentación oficial.
+
 ---
 
 ## ⚙️ Cuándo usar y cuándo no usar Ryu
