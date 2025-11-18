@@ -128,9 +128,29 @@ Ryu incluye varios controladores y aplicaciones listos para ser usados o adaptad
 sudo apt update && sudo apt upgrade -y
 ```
 
+**Salida esperada:**
+```
+...
+Fetched 2,456 kB in 3s (818 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+```
+
 ### 2️⃣ Instalar dependencias
 ```bash
 sudo apt install -y python3 python3-pip python3-venv git mininet
+```
+
+**Salida esperada:**
+```
+Reading package lists... Done
+Building dependency tree... Done
+...
+Setting up mininet (2.3.0+dfsg-4ubuntu1) ...
+Setting up python3-venv (3.10.12-1~22.04) ...
+done.
 ```
 
 ### 3️⃣ Crear entorno virtual
@@ -141,10 +161,27 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
+**Salida esperada:**
+```
+(venv) user@ubuntu:~/ryu$
+```
+
+> 💡 **Nota:** El prompt cambia a `(venv)` indicando que el entorno virtual está activo.
+
 ### 4️⃣ Instalar Ryu y dependencias compatibles
 ```bash
 pip install eventlet==0.33.3 dnspython==2.6.1
 pip install ryu
+```
+
+**Salida esperada:**
+```
+Collecting eventlet==0.33.3
+  Downloading eventlet-0.33.3-py3-none-any.whl (220 kB)
+Successfully installed eventlet-0.33.3 dnspython-2.6.1
+Collecting ryu
+  Downloading ryu-4.34-py3-none-any.whl (1.2 MB)
+Successfully installed ryu-4.34 ...
 ```
 
 > 💡 **Nota:** Eventlet y dnspython deben instalarse antes de Ryu para evitar errores de compatibilidad con Python 3.12.
@@ -153,7 +190,8 @@ pip install ryu
 ```bash
 ryu-manager --version
 ```
-Debe mostrar:
+
+**Salida esperada:**
 ```
 ryu-manager 4.34
 ```
@@ -168,17 +206,58 @@ Ejemplo: 3 hosts y 1 switch.
 sudo mn --topo single,3 --controller remote --mac --switch ovsk
 ```
 
+**Salida esperada:**
+```
+*** Creating network
+*** Adding controller
+*** Adding hosts:
+h1 h2 h3
+*** Adding switches:
+s1
+*** Adding links:
+(h1, s1) (h2, s1) (h3, s1)
+*** Configuring hosts
+h1 h2 h3
+*** Starting controller
+c0
+*** Starting 1 switches
+s1 ...
+*** Starting CLI:
+mininet>
+```
+
 ### 2️⃣ Comprobar conectividad
 ```bash
 mininet> pingall
 ```
 
-Debe mostrar un **100% de éxito**.
+**Salida esperada:**
+```
+*** Ping: testing ping reachability between hosts
+h1 -> h2 h3
+h2 -> h1 h3
+h3 -> h1 h2
+*** Results: 0% dropped (6/6 received)
+```
 
 ### 3️⃣ Probar conexión HTTP con `curl`
 ```bash
 mininet> h1 python3 -m http.server 80 &
 mininet> h2 curl http://10.0.0.1
+```
+
+**Salida esperada:**
+```
+[1] 12345
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+...
+</head>
+<body>
+Directory listing for /
+</body>
+</html>
 ```
 
 ---
@@ -192,9 +271,48 @@ Ryu incluye un ejemplo de **firewall con interfaz REST**, el cual permite crear,
 ryu-manager ryu.app.rest_firewall
 ```
 
+**Salida esperada:**
+```
+loading app ryu.app.rest_firewall
+loading app ryu.controller.ofp_handler
+instantiating app ryu.app.rest_firewall of RestFirewall
+instantiating app ryu.controller.ofp_handler of OFPHandler
+BRICK rest_firewall
+  PROVIDES:
+    rest_firewall
+  CONSUMES:
+    ofp_event
+BRICK ofp_handler
+  PROVIDES:
+    ofp_event
+  CONSUMES:
+    main
+(15823) wsgi starting up on http://0.0.0.0:8080/
+```
+
 ### 2️⃣ Iniciar Mininet con un switch remoto
 ```bash
 sudo mn --topo single,3 --controller remote --mac --switch ovsk
+```
+
+**Salida esperada:**
+```
+*** Creating network
+*** Adding controller
+*** Adding hosts:
+h1 h2 h3
+*** Adding switches:
+s1
+*** Adding links:
+(h1, s1) (h2, s1) (h3, s1)
+*** Configuring hosts
+h1 h2 h3
+*** Starting controller
+c0
+*** Starting 1 switches
+s1 ...
+*** Starting CLI:
+mininet>
 ```
 
 ### 3️⃣ Probar conectividad inicial
@@ -202,10 +320,34 @@ sudo mn --topo single,3 --controller remote --mac --switch ovsk
 mininet> pingall
 ```
 
+**Salida esperada:**
+```
+*** Ping: testing ping reachability between hosts
+h1 -> X X
+h2 -> X X
+h3 -> X X
+*** Results: 100% dropped (0/6 received)
+```
+
+> ⚠️ **Nota:** El firewall bloquea todo el tráfico por defecto, por eso todos los pings fallan inicialmente.
+
 ### 4️⃣ Consultar estado del firewall
 En otra terminal:
 ```bash
 curl http://127.0.0.1:8080/firewall/module/status
+```
+
+**Salida esperada:**
+```json
+{
+  "status": "enabled",
+  "switches": [
+    {
+      "dpid": "0000000000000001",
+      "status": "enabled"
+    }
+  ]
+}
 ```
 
 ### 5️⃣ Agregar una regla (bloquear h1 → h2)
@@ -213,11 +355,35 @@ curl http://127.0.0.1:8080/firewall/module/status
 curl -X POST -d '{"nw_src":"10.0.0.1","nw_dst":"10.0.0.2","actions":"DENY"}' http://127.0.0.1:8080/firewall/rules/all
 ```
 
+**Salida esperada:**
+```json
+{
+  "0000000000000001": [
+    {
+      "rule_id": 1,
+      "nw_src": "10.0.0.1",
+      "nw_dst": "10.0.0.2",
+      "actions": "DENY"
+    }
+  ]
+}
+```
+
 ### 6️⃣ Verificar nuevamente la conectividad
 ```bash
 mininet> pingall
 ```
-Ahora h1 no podrá comunicarse con h2.
+
+**Salida esperada:**
+```
+*** Ping: testing ping reachability between hosts
+h1 -> X h3
+h2 -> h1 h3
+h3 -> h1 h2
+*** Results: 16% dropped (5/6 received)
+```
+
+Ahora h1 no podrá comunicarse con h2 (X indica fallo).
 
 ---
 
@@ -230,9 +396,38 @@ Ahora h1 no podrá comunicarse con h2.
 curl -X POST -d '{"dl_type": "IPv4", "nw_src": "10.0.0.0/24", "nw_dst": "10.0.0.0/24", "actions": "ALLOW"}' http://127.0.0.1:8080/firewall/rules/all
 ```
 
+**Salida esperada:**
+```json
+{
+  "0000000000000001": [
+    {
+      "rule_id": 1,
+      "dl_type": "IPv4",
+      "nw_src": "10.0.0.0/24",
+      "nw_dst": "10.0.0.0/24",
+      "actions": "ALLOW"
+    }
+  ]
+}
+```
+
 - **Bloquear el tráfico de un host origen a uno destino:**
 ```bash
 curl -X POST -d '{"nw_src":"10.0.0.1","nw_dst":"10.0.0.2","actions":"DENY"}' http://127.0.0.1:8080/firewall/rules/all
+```
+
+**Salida esperada:**
+```json
+{
+  "0000000000000001": [
+    {
+      "rule_id": 2,
+      "nw_src": "10.0.0.1",
+      "nw_dst": "10.0.0.2",
+      "actions": "DENY"
+    }
+  ]
+}
 ```
 
 - **Permitir SOLO el tráfico de h1 a h4 (bloqueando el resto):**
@@ -242,9 +437,29 @@ curl -X POST -d '{"nw_src":"10.0.0.1","nw_dst":"10.0.0.2","actions":"DENY"}' htt
 # Obtén los rule_id y switch_id con: curl http://127.0.0.1:8080/firewall/rules/all
 curl -X DELETE http://127.0.0.1:8080/firewall/rules/<switch_id>/<rule_id>
 ```
+
+**Salida esperada:**
+```
+Rule deleted successfully
+```
+
 (Paso 2, agrega la regla ALLOW)
 ```bash
 curl -X POST -d '{"nw_src":"10.0.0.1","nw_dst":"10.0.0.4","actions":"ALLOW"}' http://127.0.0.1:8080/firewall/rules/all
+```
+
+**Salida esperada:**
+```json
+{
+  "0000000000000001": [
+    {
+      "rule_id": 1,
+      "nw_src": "10.0.0.1",
+      "nw_dst": "10.0.0.4",
+      "actions": "ALLOW"
+    }
+  ]
+}
 ```
 
 - **Ver todas las reglas (y su orden/prioridad):**
@@ -252,11 +467,40 @@ curl -X POST -d '{"nw_src":"10.0.0.1","nw_dst":"10.0.0.4","actions":"ALLOW"}' ht
 curl http://127.0.0.1:8080/firewall/rules/all
 ```
 
+**Salida esperada:**
+```json
+{
+  "0000000000000001": [
+    {
+      "rule_id": 1,
+      "nw_src": "10.0.0.1",
+      "nw_dst": "10.0.0.2",
+      "actions": "DENY"
+    },
+    {
+      "rule_id": 2,
+      "dl_type": "IPv4",
+      "nw_src": "10.0.0.0/24",
+      "nw_dst": "10.0.0.0/24",
+      "actions": "ALLOW"
+    }
+  ]
+}
+```
+
 - **Habilitar el firewall en un switch (imprescindible que esté "enable"):**
 ```bash
 curl -X PUT -d '{"status":"enable"}' http://127.0.0.1:8080/firewall/module/enable/<dpid>
 # Por ejemplo, para s1:
 curl -X PUT -d '{"status":"enable"}' http://127.0.0.1:8080/firewall/module/enable/0000000000000001
+```
+
+**Salida esperada:**
+```json
+{
+  "status": "enabled",
+  "dpid": "0000000000000001"
+}
 ```
 
 ---
@@ -269,9 +513,57 @@ Puedes diseñar topologías personalizadas usando scripts Python. Ejemplo: `topo
 ```bash
 # En una terminal: lanza Ryu con un controlador (por ejemplo, el switch 13)
 ryu-manager ryu.app.simple_switch_13
+```
 
+**Salida esperada:**
+```
+loading app ryu.app.simple_switch_13
+instantiating app ryu.app.simple_switch_13 of SimpleSwitch13
+BRICK simple_switch_13
+  PROVIDES:
+    simple_switch
+  CONSUMES:
+    ofp_event
+```
+
+```bash
 # En otra terminal, ejecuta la topología avanzada:
 sudo python3 topo_test_hard.py
+```
+
+**Salida esperada:**
+```
+=== Configuracion de topoloia personalizada ===
+Ingrese el numero de switches (default=5): 3
+Ingrese el numero de hosts (default=8): 4
+
+*** Creando red...
+*** Agregando controlador REMOTO para Ryu...
+Se crearon los switches: ['s1', 's2', 's3']
+Se crearon los hosts: ['h1', 'h2', 'h3', 'h4']
+
+*** Conectando switches manualmente...
+
+Con que switches quieres conectar s1? (ej: s2,s3 o Enter para ninguno): s2,s3
+  Enlace creado: s1 s2
+  Enlace creado: s1 s3
+
+*** Conectando hosts a los switches finales...
+¿A ue switch final conectaras h1? (ej: s5): s1
+  Enlace creado: h1  s1
+...
+
+=== Resumen de topologia creada ===
+Enlaces entre switches:
+  s1 s2
+  s1 s3
+...
+
+¿Deseas iniciar la red con esta configuracon? (s/n): s
+
+*** Construyendo red...
+*** Iniciando CLI de Mininet...
+mininet>
 ```
 - Puedes elegir el número de switches, hosts y cómo conectarlos.
 - Los switches buscarán automáticamente a Ryu en 127.0.0.1:6633.
@@ -297,6 +589,15 @@ c0 = net.addController('c0', controller=RemoteController, ip='192.168.56.103', p
 - Para capturar tráfico con `tcpdump`:
 ```bash
 mininet> h1 tcpdump -i h1-eth0
+```
+
+**Salida esperada:**
+```
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on h1-eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
+12:34:56.789012 IP 10.0.0.2 > 10.0.0.1: ICMP echo request, id 1, seq 1, length 64
+12:34:56.789123 IP 10.0.0.1 > 10.0.0.2: ICMP echo reply, id 1, seq 1, length 64
+...
 ```
 - Para análisis gráfico, abre Wireshark en la VM y selecciona la interfaz deseada (ejemplo: `h1-eth0`).
 
